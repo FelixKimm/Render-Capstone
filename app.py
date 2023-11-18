@@ -6,6 +6,8 @@ from auth import AuthError, requires_auth
 
 from models import setup_db, Team, Player
 
+
+
 def create_app(test_config=None):
     app = Flask(__name__)
     setup_db(app)
@@ -21,9 +23,17 @@ def create_app(test_config=None):
         )
         return response
 
-    @app.route('/')
-    def index():
-        return "Available endpoints: /teams or /players"
+    # @app.route('/')
+    # def index():
+    #     # return "Available endpoints: /teams or /players"
+    #     teams = Team.query.all()
+    #     for team in teams:
+    #         print(f"Team Name: {team.name}")
+    #         print("Players:")
+    #         for player in team.players:
+    #             print(f"-{player.name}")
+    #         print("\n")
+    #     return "a"
 
     # TEAM ENDPOINTS
 
