@@ -6,7 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 import os
 
-headers = {'Authorization': f'Bearer {os.environ["CLUB_AUTH_TOKEN"]}'}
+club_headers= {'Authorization': f'Bearer {os.environ["CLUB_AUTH_TOKEN"]}'}
+viewer_headers = {'Authorization': f'Bearer {os.environ["VIEWER_AUTH_TOKEN"]}'}
 
 class CapstoneTestCase(unittest.TestCase):
     
@@ -23,10 +24,68 @@ class CapstoneTestCase(unittest.TestCase):
     def tearDown(self):
         pass
 
+    #VIEWER TEST
+    def test_get_teams(self):
+        res = self.client().get('/teams', headers=viewer_headers)
+        data = json.loads(res.data)
 
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    def test_get_teams_error(self):
+        res = self.client().get('/teams')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Unauthorized')
+
+    def test_get_players(self):
+        res = self.client().get('/players', headers=viewer_headers)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+
+    def test_get_players_error(self):
+        res = self.client().get('/players')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Unauthorized')
+
+    #FORBIDDEN TEST(POST, PATCH, DELETE)
+
+    def test_forbidden_post(self):
+        res = self.client().post('/teams', headers=viewer_headers, json=self.example_team)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Forbidden')
+
+    def test_forbidden_delete(self):
+        res = self.client().delete('/teams/13', headers=viewer_headers)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Forbidden')
+
+    def test_forbidden_patch(self):
+        res = self.client().patch('/teams/5', headers=viewer_headers, json=self.example_team)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Forbidden')
+
+    #CLUB TEST
     #TEST TEAMS ENDPOINT
     def test_get_teams(self):
-        res = self.client().get('/teams', headers=headers)
+        res = self.client().get('/teams', headers=club_headers)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -41,7 +100,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Unauthorized')
 
     def test_post_teams(self):
-        res = self.client().post('/teams', headers=headers, json=self.example_team)
+        res = self.client().post('/teams', headers=club_headers, json=self.example_team)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -56,7 +115,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Unauthorized')
 
     def test_delete_teams(self):
-        res = self.client().delete('/teams/13', headers=headers)
+        res = self.client().delete('/teams/13', headers=club_headers)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -71,7 +130,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Unauthorized')
 
     def test_patch_teams(self):
-        res = self.client().patch('teams/7', headers=headers, json=self.example_team)
+        res = self.client().patch('teams/7', headers=club_headers, json=self.example_team)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -87,7 +146,7 @@ class CapstoneTestCase(unittest.TestCase):
 
     #TEST PLAYERS ENDPOINT
     def test_get_players(self):
-        res = self.client().get('/players', headers=headers)
+        res = self.client().get('/players', headers=club_headers)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -103,7 +162,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Unauthorized')
 
     def test_post_players(self):
-        res = self.client().post('/players', headers=headers, json=self.example_player)
+        res = self.client().post('/players', headers=club_headers, json=self.example_player)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -118,7 +177,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Unauthorized')
 
     def test_delete_players(self):
-        res = self.client().delete('/players/7', headers=headers)
+        res = self.client().delete('/players/7', headers=club_headers)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -133,7 +192,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Unauthorized')
 
     def test_patch_players(self):
-        res = self.client().patch('/players/6', headers=headers, json=self.example_player)
+        res = self.client().patch('/players/6', headers=club_headers, json=self.example_player)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
