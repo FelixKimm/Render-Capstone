@@ -2,7 +2,7 @@ import os
 from flask import Flask, request, abort, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-# from .auth.auth import AuthError, requires_auth
+from auth import AuthError, requires_auth
 
 from models import setup_db, Team, Player
 
@@ -24,11 +24,12 @@ def create_app(test_config=None):
     # TEAM ENDPOINTS
 
     @app.route('/teams', methods=['GET'])
-    def get_teams():
+    @requires_auth('get:team')
+    def get_teams(payload):
         teams = Team.query.all()
 
         if len(teams) == 0:
-            return 'There are no teams on the database!'
+            return 'There are no teams in the database!'
 
         formatted_teams = []
         for team in teams:
@@ -42,7 +43,8 @@ def create_app(test_config=None):
         }
     
     @app.route('/teams', methods=['POST'])
-    def create_team():
+    @requires_auth('post:team')
+    def create_team(payload):
         body = request.get_json()
 
         new_name = body.get('name')
@@ -56,7 +58,7 @@ def create_app(test_config=None):
             team.insert()
 
             return jsonify ({
-                'sucess': True,
+                'success': True,
                 'team_id': team.id,
                 'team_name': team.name
             })
@@ -65,7 +67,8 @@ def create_app(test_config=None):
             abort(422)
 
     @app.route('/teams/<int:team_id>', methods=['DELETE'])
-    def delete_team(team_id):
+    @requires_auth('delete:team')
+    def delete_team(payload, team_id):
         try:
             team = Team.query.get(team_id)
 
@@ -85,14 +88,15 @@ def create_app(test_config=None):
             return jsonify({
                 'success': True,
                 'deleted_team': team.name,
-                'deleteed_players': players_deleted
+                'deleted_players': players_deleted
             })
         except Exception as e:
             print(f"An error occurred: {str(e)}")
             abort(422)
 
     @app.route('/teams/<int:team_id>', methods=['PATCH'])
-    def patch_team(team_id):
+    @requires_auth('patch:team')
+    def patch_team(payload, team_id):
         body = request.get_json()
     
         patch_team = Team.query.get(team_id)
@@ -110,31 +114,33 @@ def create_app(test_config=None):
 
         return jsonify ({
             'success': True,
-            'old_name': old_name,
-            'new_name': patch_name
+            'old_team': old_name,
+            'new_team': patch_name
         }) 
 
 
     # PLAYER ENDPOINTS
 
     @app.route('/players', methods=['GET'])
-    def get_players():
+    @requires_auth('get:player')
+    def get_players(payload):
         players = Player.query.order_by(Player.team_id).all()
 
         if len(players) == 0:
-            return 'There are no players on the database!'
+            return 'There are no players in the database!'
 
         formatted_players = [player.format() for player in players]
 
         return {
-            'sucess': True,
+            'success': True,
             'Players': formatted_players,
             'total_players': len(players)
         }
 
 
     @app.route('/players', methods=['POST'])
-    def create_player():
+    @requires_auth('post:player')
+    def create_player(payload):
         body = request.get_json()
 
         new_name = body.get('name')
@@ -162,13 +168,14 @@ def create_app(test_config=None):
             abort(422)
 
     @app.route('/players/<int:player_id>', methods=['DELETE'])
+    @requires_auth('delete:player')
     def delete_player(player_id):
         try:
             player = Player.query.get(player_id)
 
             if player is None:
                 print("This player id does't exist")
-                abort(422)
+                abort(404)
             
             player.delete()
 
@@ -182,13 +189,13 @@ def create_app(test_config=None):
             abort(422)
 
     @app.route('/players/<int:player_id>', methods=['PATCH'])
-    def patch_player(player_id):
+    @requires_auth('patch:player')
+    def patch_player(payload, player_id):
         body = request.get_json()
 
         patch_player = Player.query.get(player_id)
         old_team = patch_player.team_id
 
-        patch_name = body.get('team_id')
         patch_team_id = body.get('team_id')
 
         if patch_player is None:
@@ -203,7 +210,7 @@ def create_app(test_config=None):
         return jsonify ({
             'success': True,
             'old_team': old_team,
-            'new_team': patch_name
+            'new_team': patch_team_id
         }) 
 
     @app.errorhandler(400)
@@ -230,8 +237,8 @@ def create_app(test_config=None):
     def server_error(error):
         return jsonify({"success": False, "error": 500, "message": "server error"}), 500
     
-    # @app.errorhandler(AuthError)
-    # def autherror(error):
-    #     return jsonify({"success": False, "error": 401, "message": "server error"}), 401
+    @app.errorhandler(AuthError)
+    def autherror(error):
+        return jsonify({"success": False, "error": 401, "message": "server error"}), 401
 
     return app
