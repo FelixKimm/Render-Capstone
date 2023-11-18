@@ -21,6 +21,10 @@ def create_app(test_config=None):
         )
         return response
 
+    @app.route('/')
+    def index():
+        return "Available endpoints: /teams or /players"
+
     # TEAM ENDPOINTS
 
     @app.route('/teams', methods=['GET'])
@@ -169,7 +173,7 @@ def create_app(test_config=None):
 
     @app.route('/players/<int:player_id>', methods=['DELETE'])
     @requires_auth('delete:player')
-    def delete_player(player_id):
+    def delete_player(payload, player_id):
         try:
             player = Player.query.get(player_id)
 
@@ -221,7 +225,7 @@ def create_app(test_config=None):
 
     @app.errorhandler(401)
     def bad_request(error):
-        return jsonify({"success": False, "error": 401, "message": "Unathorized"}), 401
+        return jsonify({"success": False, "error": 401, "message": "Unauthorized"}), 401
 
     @app.errorhandler(404)
     def not_found(error):
