@@ -213,6 +213,8 @@ def create_app(test_config=None):
             'new_team': patch_team_id
         }) 
 
+    # ERROR HANDLERS
+
     @app.errorhandler(400)
     def bad_request(error):
         return jsonify({"success": False, "error": 400, "message": "bad request"}), 400
