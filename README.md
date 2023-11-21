@@ -52,3 +52,140 @@ Club
 
 Viewer
 * Permissions: GET Team/Player
+
+### Endpoints
+
+#### GET '/teams'
+
+* Fetches a dictionary with teams and players of that team
+* Roles required: Club or Viewer
+* Body: None
+* Response:
+
+```
+{
+    "Teams": [
+        {
+            "id": 1,
+            "name": "Barcelona",
+            "players": [
+                {
+                    "id": 1,
+                    "name": "Pedri",
+                    "team_id": 1
+                },
+                {
+                    "id": 2,
+                    "name": "Gavi",
+                    "team_id": 1
+                }
+            ],
+            "total_players": 2
+        }
+    ],
+    "success": true
+}
+```
+
+#### GET '/players'
+
+* Fetches a dictionary with all players and their team id
+* Roles required: Club or Viewer
+* Body: None
+* Response:
+```
+{
+    "Players": [
+        {
+            "id": 1,
+            "name": "Pedri",
+            "team_id": 1
+        },
+        {
+            "id": 2,
+            "name": "Gavi",
+            "team_id": 1
+        }
+    ],
+    "success": true,
+    "total_players": 2
+}
+```
+
+#### POST '/teams'
+
+* Creates a new team
+* Roles required: Club
+* Body:
+```
+{
+    "name": "Barcelona"
+}
+```
+* Response:
+```
+{
+    "success": true,
+    "team_id": 1,
+    "team_name": "Barcelona"
+}
+```
+
+#### POST '/players'
+
+* Creates a new player with a team attached
+* Roles required: Club
+* Body:
+```
+{
+    "name": "Pedri",
+    "team_id": 1
+}
+```
+* Response:
+```
+{
+    "player_id": 1,
+    "player_name": "Pedri",
+    "success": true,
+    "team_id": 1
+}
+```
+
+#### Patch '/teams/int:team_id'
+
+* Updates a team name
+* Roles required: Club
+* Body:
+```
+{
+    "name": "Real Madrid"
+}
+```
+* Response:
+```
+{
+    "new_team": "Real Madrid",
+    "old_team": "Barcelona",
+    "success": true
+}
+```
+
+#### Patch '/players'
+
+* Updates the team id (changing club)
+* Roles required: Club
+* Body:
+```
+{
+    "team_id": "2"
+}
+```
+* Response:
+```
+{
+    "new_team": "2",
+    "old_team": 1,
+    "success": true
+}
+```

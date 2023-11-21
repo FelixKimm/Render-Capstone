@@ -128,8 +128,8 @@ def create_app(test_config=None):
 
         return jsonify ({
             'success': True,
-            'old_team': old_name,
-            'new_team': patch_name
+            'old_team_name': old_name,
+            'new_team_name': patch_name
         }) 
 
 
