@@ -5,8 +5,10 @@ URL for the API: xxxxxxxxxxxxxxxxxx
 
 ## General Specifications
 
-* Models with:
-
+* 2 Models: Teams and Players
+* Endpoints: Get, POST, PATCH AND DELETE
+* 2 Roles: Club and Viewer
+* 10 Permissions: GET Team/Player, POST Team/Player, Patch Team/Player, DELETE Team/Player
 
 ## Dependencies
 
@@ -41,4 +43,12 @@ createdb capstone
 python capstone_test.py
 ```
 
-## API Documentation for the Capstone Project
+## API Documentation
+
+### Roles
+
+Club
+* Permissions: GET Team/Player, POST Team/Player, Patch Team/Player, DELETE Team/Player
+
+Viewer
+* Permissions: GET Team/Player
