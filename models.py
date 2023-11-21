@@ -3,10 +3,10 @@ from sqlalchemy import Column, String, create_engine
 from flask_sqlalchemy import SQLAlchemy
 import json
 from flask_migrate import Migrate
-from settings import DB_NAME, DB_USER, DB_PASSWORD
+from settings import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST
 
 database_name = DB_NAME
-database_path = f'postgresql://{DB_USER}:{DB_PASSWORD}@localhost:5432/{DB_NAME}'
+database_path = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:5432/{DB_NAME}'
 
 db = SQLAlchemy()
 
