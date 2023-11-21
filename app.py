@@ -23,9 +23,17 @@ def create_app(test_config=None):
         )
         return response
 
-    @app.route('/')
+    @app.route('/') #little tests
     def index():
-        return "aaaaa"
+        # return "Available endpoints: /teams or /players"
+        teams = Team.query.all()
+        for team in teams:
+            print(f"Team Name: {team.name}")
+            print("Players:")
+            for player in team.players:
+                print(f"-{player.name}")
+            print("\n")
+        return "a"
 
     # TEAM ENDPOINTS
 
