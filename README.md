@@ -152,7 +152,7 @@ Viewer
 }
 ```
 
-#### Patch '/teams/int:team_id'
+#### PATCH '/teams/int:id'
 
 * Updates a team name
 * Roles required: Club
@@ -171,7 +171,7 @@ Viewer
 }
 ```
 
-#### Patch '/players'
+#### PATCH '/players/int:id'
 
 * Updates the team id (changing club)
 * Roles required: Club
@@ -186,6 +186,36 @@ Viewer
 {
     "new_team": "2",
     "old_team": 1,
+    "success": true
+}
+```
+
+#### DELETE '/teams/int:id
+
+* Deletes the team and the players of that team
+* Roles required: Club
+* Body: None
+* Response:
+```
+{
+    "deleted_players": [
+        "Gavi",
+        "Ter Stegen"
+    ],
+    "deleted_team": "Liverpool",
+    "success": true
+}
+```
+
+#### DELETE '/players/int:id'
+
+* Deletes the player
+* Roles required: Club
+* Body: None
+* Response
+```
+{
+    "deleted_player": "Pedri",
     "success": true
 }
 ```
