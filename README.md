@@ -1,7 +1,7 @@
 # Udacity Full Stack Capstone Project
 
 Final project for the Udacity Full Stack Web Developer course.
-URL for the API: xxxxxxxxxxxxxxxxxx
+URL for the API: https://felix-kim-render-capstone-fullstack.onrender.com/
 
 ## General Specifications
 
