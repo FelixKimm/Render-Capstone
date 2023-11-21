@@ -33,7 +33,6 @@ def create_app(test_config=None):
             for player in team.players:
                 print(f"-{player.name}")
             print("\n")
-        return "a"
 
     # TEAM ENDPOINTS
 
